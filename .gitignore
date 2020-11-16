@@ -1,0 +1,18 @@
+# Terraform
+.terraform
+.terragrunt
+*.tfstate
+*.tfstate.backup
+.plugins
+
+# Personal
+
+
+# Binaries
+bin/terragrunt
+bin/terraform
+
+# testinfra
+layers/*/tests/__pycache__
+.cache/
+ssh_config_tmp.*
