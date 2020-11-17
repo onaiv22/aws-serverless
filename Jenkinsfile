@@ -34,6 +34,11 @@ pipeline {
                 ])
             }
         }
+        stage('Install terraform') {
+            steps {
+                sh
+            }
+        }
         stage('Run terraform plan') {
             steps {
                 dir('aws-serverless') {
