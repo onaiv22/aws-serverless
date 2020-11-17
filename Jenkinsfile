@@ -1,0 +1,77 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'branch', defaultValue: 'master', description: 'branch to deploy')
+    }
+    environment {
+        AWS_ACCESS_KEY_ID = credentials('aws_access_key')
+        AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
+        TF_IN_AUTOMATION      = "TRUE"
+        TF_INPUT              = "0"
+        TF_LOG                = "WARN"
+    }
+    options {
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '6'))
+
+    }
+
+    stages {
+        stage('Cleanup workspace') {
+            steps {
+                cleanWs deleteDirs: true, disableDeferredWipeout: true
+            }
+        }
+        stage('checkout') {
+            steps {
+                checkout([$class: 'GitSCM',
+                branches: [[name: '*/${params.name'} ]],
+                doGenerateSubmoduleConfigurations: false,
+                extensions: [], submoduleCfg: [],
+                userRemoteConfigs: [[
+                    url: 'https://github.com/onaiv22/aws-serverless.git'
+                    ]]
+                ])
+            }
+        }
+        stage('Run terraform plan') {
+            steps {
+                dir('aws-serverless') {
+                    sh """
+                        echo "initializing terraform"
+                        terrafom init
+                    """
+                }
+            }
+        }
+        stage('Run terraform plan') {
+            steps {
+                dir('aws-serverless') {
+                    sh"""
+                        echo "running terraform plan"
+                        terraform plan
+                    """
+                }
+            }
+        }
+        stage('run terraform apply') {
+            steps {
+                dir('aws-serverless') {
+                    sh"""
+                        echo "running terraform apply"
+                        terraform apply
+                """
+                }
+            }
+        }
+    }
+    post {
+        success {
+            mail bcc: '', body: 'This terraform infrastructure was successful', cc: '', from: '', replyTo: '', subject: 'success build', to: 'onaiv22@gmail.com'
+        }
+        failure {
+            //
+        }
+    }
+
+}
