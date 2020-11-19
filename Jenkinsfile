@@ -54,7 +54,7 @@ pipeline {
                 }
             }
         }
-        stage(prompt to apply) {
+        stage('prompt to apply') {
            steps {
                input message: "Do you want to deploy this?", ok: "Yes"
            }
