@@ -2,10 +2,8 @@ pipeline {
     agent any
     tools {
         "org.jenkinsci.plugins.terraform.TerraformInstallation" "terraform"
+
     }
-    //parameters {
-        //string(name: 'branch', defaultValue: 'master', description: 'branch to deploy')
-    //}
     environment {
         AWS_ACCESS_KEY_ID = credentials('aws_access_key')
         AWS_SECRET_ACCESS_KEY_ID = credentials('aws_secret_access_key')
@@ -18,7 +16,6 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '6'))
 
     }
-
     stages {
         stage('Cleanup workspace') {
             steps {
@@ -39,22 +36,18 @@ pipeline {
         }
         stage('Run terraform init') {
             steps {
-                dir('aws-serverless') {
-                    sh """
-                        echo "initializing terraform"
-                        terraform init
-                    """
-                }
+                sh"""
+                   echo "running terraform init"
+                   terraform init
+                """
             }
         }
         stage('Run terraform plan') {
             steps {
-                dir('aws-serverless') {
-                    sh"""
-                        echo "running terraform plan"
-                        terraform plan
-                    """
-                }
+                sh"""
+                   echo "running terraform plan"
+                   terraform plan
+                """
             }
         }
         stage('prompt to apply') {
@@ -64,10 +57,9 @@ pipeline {
         }
         stage('run terraform apply') {
             steps {
-                dir('aws-serverless') {
-                    sh"""
-                        echo "running terraform apply"
-                        terraform apply
+                sh"""
+                   echo "running terraform apply"
+                   terraform apply
                 """
                 }
             }
