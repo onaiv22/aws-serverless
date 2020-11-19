@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        "org.jenkinsci.plugins.terraform.TerraformInstallation" "terraform"
+    }
     //parameters {
         //string(name: 'branch', defaultValue: 'master', description: 'branch to deploy')
     //}
@@ -39,7 +42,7 @@ pipeline {
                 dir('aws-serverless') {
                     sh """
                         echo "initializing terraform"
-                        terrafom init
+                        terraform init
                     """
                 }
             }
