@@ -1,7 +1,7 @@
 data "aws_iam_policy_document" "s3_policy" {
    statement {
       actions = ["s3:ListBucket"]
-      resources = [aws_s3_bucket.ukba_uploads.arn,aws_s3_bucket.functions.arn]
+      resources = ["aws_s3_bucket.ukba_uploads.arn","aws_s3_bucket.functions.arn"]
    }
    statement {
       actions = ["s3:GetObject"]
@@ -40,5 +40,5 @@ resource "aws_iam_policy_attachment" "lambda-call-policy-attach" {
 
 
 output "lambda_role" {
-   value = [aws_iam_role.lambda_role.arn]
+   value = aws_iam_role.lambda_role.arn
 }
