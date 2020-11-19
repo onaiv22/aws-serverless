@@ -24,7 +24,7 @@ pipeline {
         }
         stage('checkout') {
             steps {
-                checkout([\$class: 'GitSCM',
+                checkout([$class: 'GitSCM',
                 branches: [[name: '*/master' ]],
                 doGenerateSubmoduleConfigurations: false,
                 extensions: [], submoduleCfg: [],
