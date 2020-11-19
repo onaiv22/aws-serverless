@@ -61,17 +61,7 @@ pipeline {
                    echo "running terraform apply"
                    terraform apply
                 """
-                }
             }
         }
     }
-    post {
-        success {
-            mail bcc: '', body: 'This terraform infrastructure was successful', cc: '', from: '', replyTo: '', subject: 'success build', to: 'onaiv22@gmail.com'
-        }
-        failure {
-            mail bcc: '', body: 'This terraform infrastructure was successful', cc: '', from: '', replyTo: '', subject: 'build failed', to: 'onaiv22@gmail.com'
-        }
-    }
-
 }
