@@ -1,8 +1,8 @@
 pipeline {
     agent any
-    parameters {
-        string(name: 'branch', defaultValue: 'master', description: 'branch to deploy')
-    }
+    //parameters {
+        //string(name: 'branch', defaultValue: 'master', description: 'branch to deploy')
+    //}
     environment {
         AWS_ACCESS_KEY_ID = credentials('aws_access_key')
         AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
@@ -25,7 +25,7 @@ pipeline {
         stage('checkout') {
             steps {
                 checkout([$class: 'GitSCM',
-                branches: [[name: '*/${params.name'} ]],
+                branches: [[name: '*/main'} ]],
                 doGenerateSubmoduleConfigurations: false,
                 extensions: [], submoduleCfg: [],
                 userRemoteConfigs: [[
@@ -34,12 +34,7 @@ pipeline {
                 ])
             }
         }
-        stage('Install terraform') {
-            steps {
-                sh
-            }
-        }
-        stage('Run terraform plan') {
+        stage('Run terraform init') {
             steps {
                 dir('aws-serverless') {
                     sh """
@@ -59,6 +54,11 @@ pipeline {
                 }
             }
         }
+        stage(prompt to apply) {
+           steps {
+               input message: "Do you want to deploy this?", ok: "Yes"
+           }
+        }
         stage('run terraform apply') {
             steps {
                 dir('aws-serverless') {
@@ -75,7 +75,7 @@ pipeline {
             mail bcc: '', body: 'This terraform infrastructure was successful', cc: '', from: '', replyTo: '', subject: 'success build', to: 'onaiv22@gmail.com'
         }
         failure {
-            //
+            mail bcc: '', body: 'This terraform infrastructure was successful', cc: '', from: '', replyTo: '', subject: 'build failed', to: 'onaiv22@gmail.com'
         }
     }
 
